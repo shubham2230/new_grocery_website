@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart - Login</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Nunito+Sans:wght@400;600;700;800&display=swap">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow-x: hidden;
+        }
+        
+        body {
+            font-family: 'Nunito Sans', sans-serif;
+            background: #030303;
+            color: #FFFAFA;
+        }
+        
+        .login-container {
+            display: grid;
+            grid-template-columns: minmax(300px, 30%) 1fr;
+            height: 100vh;
+            width: 100%;
+            position: relative;
+        }
+        
+        .login-left {
+            background: #59AB69;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .login-left img {
+            width: 80%;
+            max-width: 550px;
+            height: auto;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .login-right {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2% 5%;
+        }
+        
+        .login-title {
+            text-align: center;
+            font-size: clamp(2rem, 5vw, 3.5rem);
+            font-family: 'Inter', sans-serif;
+            margin-bottom: 2rem;
+        }
+        
+        .login-form-container {
+            width: 100%;
+            max-width: 500px;
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-header {
+            width: 100%;
+            margin-bottom: 1rem;
+        }
+        
+        .login-header h2 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: #FFFAFA;
+            font-size: clamp(0.875rem, 2vw, 1rem);
+        }
+        
+        .google-login {
+            width: 100%;
+            padding: 0.75rem;
+            border-radius: 5px;
+            outline: 1px #E8E8E8 solid;
+            background: transparent;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        
+        .google-login img {
+            width: 25px;
+            height: 25px;
+            border-radius: 10px;
+        }
+        
+        .google-login span {
+            color: #828282;
+            font-size: 14px;
+            font-weight: 700;
+        }
+        
+        .divider {
+            width: 100%;
+            text-align: center;
+            margin: 1.5rem 0;
+            color: #A1A1A1;
+            font-size: 12px;
+        }
+        
+        .error-alert {
+            color: #ff6b6b;
+            font-size: 14px;
+            font-weight: 600;
+            background-color: rgba(255, 0, 0, 0.1);
+            border: 1px solid rgba(255, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 10px;
+            width: 100%;
+            text-align: center;
+            display: none;
+        }
+        
+        .login-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .form-group {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .form-label {
+            color: #828282;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 13px 10px;
+            border-radius: 5px;
+            outline: 1px #DED2D9 solid;
+            background: transparent;
+            display: flex;
+            align-items: center;
+        }
+        
+        .form-control input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            color: #E0E0E0;
+            font-size: 14px;
+            font-family: 'Nunito Sans', sans-serif;
+            outline: none;
+        }
+        
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        }
+        
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remember-me input {
+            width: 12px;
+            height: 12px;
+            accent-color: #59AB69;
+        }
+        
+        .remember-me label {
+            color: #A1A1A1;
+            font-size: 12px;
+        }
+        
+        .forgot-password {
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .login-button {
+            width: 100%;
+            padding: 13px 10px;
+            background: #59AB69;
+            border-radius: 6px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 18px;
+            font-weight: 800;
+            font-family: 'Nunito Sans', sans-serif;
+        }
+        
+        .register-link {
+            margin-top: 1rem;
+            text-align: center;
+            width: 100%;
+        }
+        
+        .register-link a {
+            color: #FFFAFA;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        
+        .register-link a span {
+            color: #59AB69;
+        }
+        
+        /* Media Queries */
+        @media screen and (max-width: 1200px) {
+            .login-form-container {
+                max-width: 450px;
+            }
+        }
+        
+        @media screen and (max-width: 992px) {
+            .login-container {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto 1fr;
+                height: auto;
+                min-height: 100vh;
+            }
+            
+            .login-left {
+                padding: 2rem 0;
+                height: 300px;
+            }
+            
+            .login-title {
+                margin-top: 1.5rem;
+                margin-bottom: 1rem;
+            }
+            
+            .login-left img {
+                width: 250px;
+                height: 250px;
+            }
+        }
+        
+        @media screen and (max-width: 576px) {
+            .login-form-container {
+                padding: 0 1rem;
+            }
+            
+            .login-left {
+                height: 200px;
+            }
+            
+            .login-left img {
+                width: 180px;
+                height: 180px;
+            }
+            
+            .form-options {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 1rem;
+            }
+            
+            .login-title {
+                font-size: 2rem;
+            }
+        }
+        
+        @media screen and (max-height: 700px) and (min-width: 992px) {
+            .login-form-container {
+                gap: 1rem;
+            }
+            
+            .login-header {
+                margin-bottom: 0.5rem;
+            }
+            
+            .divider {
+                margin: 0.8rem 0;
+            }
+            
+            .login-form {
+                gap: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-left">
+            <img src="images/signup.jpg" alt="Login" onerror="this.src='https://placehold.co/550x550'" />
+        </div>
+        <div class="login-right">
+            <h1 class="login-title">Login/sign-up</h1>
+            
+            <div class="login-form-container">
+                <div class="login-header">
+                    <h2>Login to your Account</h2>
+                    <p>See what is going on with your business</p>
+                </div>
+                
+                <a href="/auth/google" class="google-login" id="google-login">
+                    <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/google/google-original.svg" alt="Google" />
+                    <span>Continue with Google</span>
+                </a>
+                
+                <div class="divider">
+                    <span>------------- or Sign in with Email -------------</span>
+                </div>
+                
+                <div id="error-alert" class="error-alert"></div>
+                
+                <form action="/login" method="POST" class="login-form">
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email</label>
+                        <div class="form-control">
+                            <input type="email" name="email" id="email" required placeholder="mail@abc.com">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password" class="form-label">Password</label>
+                        <div class="form-control">
+                            <input type="password" name="password" id="password" required placeholder="•••••••••••••••••">
+                        </div>
+                        
+                        <div class="form-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember">Remember Me</label>
+                            </div>
+                            <a href="/forgot-password" class="forgot-password">Forgot Password?</a>
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="login-button">Login</button>
+                    
+                    <div class="register-link">
+                        <a href="/register.html">Don't have an account? <span>Register here</span></a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check URL parameters for any error messages
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const error = urlParams.get('error');
+            if (error) {
+                const errorAlert = document.getElementById('error-alert');
+                errorAlert.textContent = decodeURIComponent(error).replace(/\+/g, ' ');
+                errorAlert.style.display = 'block';
+            }
+            
+            // For demo purposes - you can replace this with actual Google OAuth integration
+            document.getElementById('google-login').addEventListener('click', function(e) {
+                e.preventDefault();
+                alert('Google authentication will be implemented in a future update');
+            });
+        }
+    </script>
+</body>
+</html> 

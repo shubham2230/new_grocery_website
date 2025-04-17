@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart - Seller Dashboard</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/seller.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Chart.js for analytics -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Critical fix for sidebar button display -->
+    <style>
+        /* Force menu item order */
+        #menu-item-dashboard { order: 1; }
+        #menu-item-manage-products { order: 2; }
+        #menu-item-products { order: 3; }
+        #menu-item-orders { order: 4; }
+        #menu-item-analytics { order: 5; }
+        #menu-item-categories { order: 6; }
+        #menu-item-support { order: 7; }
+        
+        /* Make sidebar wider */
+        .seller-sidebar {
+            width: 260px !important;
+            min-width: 260px !important;
+        }
+        
+        /* Remove text wrapping in sidebar menu */
+        .sidebar-nav li a {
+            white-space: normal !important;
+            overflow: visible !important;
+        }
+        
+        /* Ensure two line display for longer menu items */
+        .two-line-menu-item {
+            display: block;
+            line-height: 1.2;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="FreshMart Logo">
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <div class="seller-profile">
+                    <span class="seller-name" id="seller-name">Welcome, Seller</span>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="#profile">My Profile</a></li>
+                            <li><a class="dropdown-item" href="#settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Chat Button -->
+                <button id="open-chat-btn" class="btn btn-primary" style="margin-left: 10px;">
+                    <i class="fas fa-comments"></i> Chat Support
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alert Container for notifications -->
+    <div id="alert-container"></div>
+
+    <div class="seller-container">
+        <!-- Sidebar -->
+        <aside class="seller-sidebar">
+            <nav class="sidebar-nav">
+                <ul style="display: flex; flex-direction: column;">
+                    <!-- IMPORTANT: Explicitly ordered menu items -->
+                    <li id="menu-item-dashboard" class="active">
+                        <a href="#dashboard">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Manage Products: Second menu item -->
+                    <li id="menu-item-manage-products">
+                        <a href="seller-products.html">
+                            <i class="fas fa-edit"></i>
+                            <span class="two-line-menu-item">Manage<br>Products</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Remaining menu items in correct order -->
+                    <li id="menu-item-products">
+                        <a href="#products">
+                            <i class="fas fa-box"></i>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-orders">
+                        <a href="#orders">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Orders</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-analytics">
+                        <a href="#analytics">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-categories">
+                        <a href="#categories">
+                            <i class="fas fa-tags"></i>
+                            <span>Categories</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-support">
+                        <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json" target="_blank">
+                            <i class="fas fa-robot"></i>
+                            <span>Support Assistant</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Rest of your content here -->
+        <!-- This is a placeholder for the main content -->
+        <main class="seller-main">
+            <div class="alert alert-success">
+                <h4>Navigation Menu Fixed</h4>
+                <p>This version has the corrected sidebar navigation with "Manage Products" placed directly under the Dashboard menu item.</p>
+                <p>To use this page, copy the sidebar code from here into your original seller-dashboard.html file.</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html> 

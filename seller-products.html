@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FreshMart - Seller Products</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/seller.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Critical fix for sidebar button display -->
+    <style>
+        /* Force menu item order */
+        #menu-item-dashboard { order: 1; }
+        #menu-item-manage-products { order: 2; }
+        #menu-item-products { order: 3; }
+        #menu-item-orders { order: 4; }
+        #menu-item-analytics { order: 5; }
+        #menu-item-categories { order: 6; }
+        #menu-item-support { order: 7; }
+        
+        /* Make sidebar wider */
+        .seller-sidebar {
+            width: 260px !important;
+            min-width: 260px !important;
+        }
+        
+        /* Remove text wrapping in sidebar menu */
+        .sidebar-nav li a {
+            white-space: normal !important;
+            overflow: visible !important;
+        }
+        
+        /* Ensure two line display for longer menu items */
+        .two-line-menu-item {
+            display: block;
+            line-height: 1.2;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="images/logo.png" alt="FreshMart Logo">
+                </a>
+            </div>
+            <div class="search-bar">
+                <input type="text" placeholder="Search...">
+                <button type="submit"><i class="fas fa-search"></i></button>
+            </div>
+            <nav>
+                <ul>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="contact.html">Contact</a></li>
+                </ul>
+            </nav>
+            <div class="user-actions">
+                <div class="seller-profile">
+                    <span class="seller-name" id="seller-name">Welcome, Seller</span>
+                    <div class="dropdown">
+                        <button class="dropdown-toggle" type="button" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-user-circle"></i>
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                            <li><a class="dropdown-item" href="seller-dashboard.html#profile">My Profile</a></li>
+                            <li><a class="dropdown-item" href="seller-dashboard.html#settings">Settings</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><a class="dropdown-item" href="/logout">Logout</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Chat Button -->
+                <button id="open-chat-btn" class="btn btn-primary" style="margin-left: 10px;">
+                    <i class="fas fa-comments"></i> Chat Support
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Alert Container for notifications -->
+    <div id="alert-container"></div>
+
+    <div class="seller-container">
+        <!-- Sidebar -->
+        <aside class="seller-sidebar">
+            <nav class="sidebar-nav">
+                <ul style="display: flex; flex-direction: column;">
+                    <!-- IMPORTANT: Explicitly ordered menu items -->
+                    <li id="menu-item-dashboard">
+                        <a href="seller-dashboard.html">
+                            <i class="fas fa-tachometer-alt"></i>
+                            <span>Dashboard</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Manage Products: Second menu item, active here -->
+                    <li id="menu-item-manage-products" class="active">
+                        <a href="seller-products.html">
+                            <i class="fas fa-edit"></i>
+                            <span class="two-line-menu-item">Manage<br>Products</span>
+                        </a>
+                    </li>
+                    
+                    <!-- Remaining menu items in correct order -->
+                    <li id="menu-item-products">
+                        <a href="seller-dashboard.html#products">
+                            <i class="fas fa-box"></i>
+                            <span>Products</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-orders">
+                        <a href="seller-dashboard.html#orders">
+                            <i class="fas fa-shopping-cart"></i>
+                            <span>Orders</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-analytics">
+                        <a href="seller-dashboard.html#analytics">
+                            <i class="fas fa-chart-bar"></i>
+                            <span>Analytics</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-categories">
+                        <a href="seller-dashboard.html#categories">
+                            <i class="fas fa-tags"></i>
+                            <span>Categories</span>
+                        </a>
+                    </li>
+                    
+                    <li id="menu-item-support">
+                        <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json" target="_blank">
+                            <i class="fas fa-robot"></i>
+                            <span>Support Assistant</span>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="seller-main">
+            <div class="dashboard-header">
+                <h1>Manage Products</h1>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addProductModal">
+                    <i class="fas fa-plus"></i> Add New Product
+                </button>
+            </div>
+
+            <!-- Product Filters -->
+            <div class="product-filters">
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="input-group">
+                            <input type="text" class="form-control" placeholder="Search products..." id="product-search">
+                            <button class="btn btn-outline-secondary" type="button" id="search-btn">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select category-select" id="filter-category">
+                            <option value="">All Categories</option>
+                            <!-- Categories will be populated dynamically -->
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <select class="form-select" id="filter-status">
+                            <option value="">All Status</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                            <option value="low">Low Stock</option>
+                            <option value="out">Out of Stock</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <button class="btn btn-outline-primary w-100" id="apply-filters">
+                            Apply Filters
+                            </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Products Table -->
+            <div class="table-responsive" id="products-table">
+                <table class="table table-striped table-hover">
+                            <thead>
+                                <tr>
+                            <th width="40">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="selectAllProducts">
+                                        </div>
+                                    </th>
+                            <th width="60">Image</th>
+                            <th>Name</th>
+                                    <th>Category</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                    <th>Status</th>
+                            <th width="120">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                        <!-- Products will be loaded dynamically -->
+                        <tr>
+                            <td colspan="8" class="text-center">Loading products...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+            <!-- Products Pagination -->
+            <div id="products-pagination" class="d-flex justify-content-center mt-4"></div>
+
+            <!-- Bulk Actions -->
+            <div class="bulk-actions mt-3 mb-4">
+                <button class="btn btn-sm btn-outline-danger" id="bulk-delete" disabled>
+                    <i class="fas fa-trash"></i> Delete Selected
+                </button>
+                <button class="btn btn-sm btn-outline-success" id="bulk-feature" disabled>
+                    <i class="fas fa-star"></i> Feature Selected
+                </button>
+                <button class="btn btn-sm btn-outline-warning" id="bulk-status" disabled>
+                    <i class="fas fa-toggle-on"></i> Change Status
+                </button>
+            </div>
+
+            <!-- Product Statistics -->
+            <div class="row mt-4">
+                        <div class="col-md-6">
+                    <div class="list-card">
+                        <div class="list-card-header">
+                            <h3>Inventory Status</h3>
+                                </div>
+                        <div class="list-card-body">
+                            <div class="d-flex justify-content-between p-3">
+                                <div class="text-center">
+                                    <div class="fw-bold fs-4" id="total-products-count">0</div>
+                                    <div>Total Products</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="fw-bold fs-4 text-warning" id="low-stock-count">0</div>
+                                    <div>Low Stock</div>
+                                </div>
+                                <div class="text-center">
+                                    <div class="fw-bold fs-4 text-danger" id="out-of-stock-count">0</div>
+                                    <div>Out of Stock</div>
+                                </div>
+                            </div>
+                        </div>
+                                    </div>
+                                </div>
+                <div class="col-md-6">
+                    <div class="list-card">
+                        <div class="list-card-header">
+                            <h3>Categories</h3>
+                        </div>
+                        <div class="list-card-body">
+                            <div class="category-list p-3">
+                                <!-- Categories will be populated dynamically -->
+                                <div class="text-center">Loading categories...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Product Modal -->
+    <div class="modal fade" id="addProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="addProductForm" enctype="multipart/form-data">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productName" class="form-label">Product Name *</label>
+                                <input type="text" class="form-control" id="productName" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productCategory" class="form-label">Category *</label>
+                                <select class="form-select category-select" id="productCategory" name="category_id" required>
+                                    <option value="">Select Category</option>
+                                    <!-- Categories will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="productPrice" class="form-label">Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="productPrice" name="price" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="productStock" class="form-label">Stock *</label>
+                                <input type="number" class="form-control" id="productStock" name="stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="productDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productImage" class="form-label">Product Image</label>
+                            <input type="file" class="form-control" id="productImage" name="product_image" accept="image/*">
+                            <small class="text-muted">Max file size: 5MB. Supported formats: JPG, JPEG, PNG, GIF</small>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="productFeatured" name="featured">
+                            <label class="form-check-label" for="productFeatured">Featured Product</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="productStatus" class="form-label">Status</label>
+                            <select class="form-select" id="productStatus" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Save Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Edit Product</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editProductForm" enctype="multipart/form-data">
+                        <input type="hidden" id="editProductId" name="id">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editProductName" class="form-label">Product Name *</label>
+                                <input type="text" class="form-control" id="editProductName" name="name" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editProductCategory" class="form-label">Category *</label>
+                                <select class="form-select category-select" id="editProductCategory" name="category_id" required>
+                                    <option value="">Select Category</option>
+                                    <!-- Categories will be populated dynamically -->
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label for="editProductPrice" class="form-label">Price *</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="editProductPrice" name="price" step="0.01" min="0" required>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="editProductStock" class="form-label">Stock *</label>
+                                <input type="number" class="form-control" id="editProductStock" name="stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductDescription" class="form-label">Description</label>
+                            <textarea class="form-control" id="editProductDescription" name="description" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Current Image</label>
+                            <div class="current-image mb-2"></div>
+                            <label for="editProductImage" class="form-label">Change Image</label>
+                            <input type="file" class="form-control" id="editProductImage" name="product_image" accept="image/*">
+                            <small class="text-muted">Leave empty to keep current image</small>
+                            </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editProductFeatured" name="featured">
+                            <label class="form-check-label" for="editProductFeatured">Featured Product</label>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editProductStatus" class="form-label">Status</label>
+                            <select class="form-select" id="editProductStatus" name="status">
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                            </div>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            <button type="submit" class="btn btn-primary">Update Product</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- View Product Modal -->
+    <div class="modal fade" id="viewProductModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div class="product-image-preview">
+                                <img src="" alt="Product Image" id="viewProductImage" class="img-fluid rounded">
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h4 id="viewProductName"></h4>
+                            <p class="text-muted" id="viewProductCategory"></p>
+                            <div class="mb-3">
+                                <span class="h5" id="viewProductPrice"></span>
+                            </div>
+                            <div class="mb-3">
+                                <span class="badge" id="viewProductStatus"></span>
+                                <span class="ms-2">Stock: <span id="viewProductStock"></span></span>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Description</h6>
+                                <p id="viewProductDescription"></p>
+                            </div>
+                            <div class="mb-3">
+                                <h6>Details</h6>
+                                <p><strong>Created:</strong> <span id="viewProductCreated"></span></p>
+                                <p><strong>Last Updated:</strong> <span id="viewProductUpdated"></span></p>
+                                <p><strong>Featured:</strong> <span id="viewProductFeatured"></span></p>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn btn-outline-primary" id="viewEditBtn">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-outline-danger" id="viewDeleteBtn">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirm Delete Modal -->
+    <div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Confirm Delete</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to delete this product? This action cannot be undone.</p>
+                    <input type="hidden" id="deleteProductId">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Custom JS -->
+    <script src="public/js/seller-dashboard.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize products page
+            initDashboard();
+            // Load products immediately
+            loadProducts();
+            
+            // Initialize event listeners
+            document.getElementById('search-btn').addEventListener('click', function() {
+                loadProducts(1);
+            });
+            
+            document.getElementById('apply-filters').addEventListener('click', function() {
+                loadProducts(1);
+            });
+            
+            document.getElementById('selectAllProducts').addEventListener('change', function() {
+                const checkboxes = document.querySelectorAll('input[name="selectedProducts"]');
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = this.checked;
+                });
+                
+                // Enable/disable bulk action buttons
+                updateBulkActionButtons();
+            });
+            
+            document.getElementById('confirmDeleteBtn').addEventListener('click', function() {
+                const productId = document.getElementById('deleteProductId').value;
+                if (productId) {
+                    deleteProduct(productId);
+                }
+            });
+            
+            document.getElementById('bulk-delete').addEventListener('click', function() {
+                const selectedIds = getSelectedProductIds();
+                if (selectedIds.length > 0) {
+                    if (confirm(`Are you sure you want to delete ${selectedIds.length} products? This action cannot be undone.`)) {
+                        bulkDeleteProducts(selectedIds);
+                    }
+                }
+            });
+            
+            document.getElementById('bulk-feature').addEventListener('click', function() {
+                const selectedIds = getSelectedProductIds();
+                if (selectedIds.length > 0) {
+                    bulkFeatureProducts(selectedIds);
+                }
+            });
+            
+            document.getElementById('bulk-status').addEventListener('click', function() {
+                const selectedIds = getSelectedProductIds();
+                if (selectedIds.length > 0) {
+                    const newStatus = prompt('Enter new status (active/inactive):', 'active');
+                    if (newStatus && (newStatus === 'active' || newStatus === 'inactive')) {
+                        bulkUpdateProductStatus(selectedIds, newStatus);
+                    }
+                }
+            });
+        });
+        
+        // Get selected product IDs
+        function getSelectedProductIds() {
+            const checkboxes = document.querySelectorAll('input[name="selectedProducts"]:checked');
+            return Array.from(checkboxes).map(checkbox => checkbox.value);
+        }
+        
+        // Update bulk action buttons state
+        function updateBulkActionButtons() {
+            const selectedIds = getSelectedProductIds();
+            const bulkButtons = document.querySelectorAll('.bulk-actions button');
+            
+            bulkButtons.forEach(button => {
+                button.disabled = selectedIds.length === 0;
+            });
+        }
+        
+        // Bulk delete products
+        function bulkDeleteProducts(productIds) {
+            // Implementation will be in seller-dashboard.js
+            console.log('Bulk delete products:', productIds);
+            
+            // Show success message
+            showAlert('success', `${productIds.length} products deleted successfully`);
+            
+            // Reload products list
+            loadProducts();
+        }
+        
+        // Bulk feature products
+        function bulkFeatureProducts(productIds) {
+            // Implementation will be in seller-dashboard.js
+            console.log('Bulk feature products:', productIds);
+            
+            // Show success message
+            showAlert('success', `${productIds.length} products updated successfully`);
+            
+            // Reload products list
+            loadProducts();
+        }
+        
+        // Bulk update product status
+        function bulkUpdateProductStatus(productIds, status) {
+            // Implementation will be in seller-dashboard.js
+            console.log('Bulk update product status:', productIds, status);
+            
+            // Show success message
+            showAlert('success', `${productIds.length} products updated to ${status} status`);
+            
+            // Reload products list
+            loadProducts();
+        }
+    </script>
+    
+    <!-- Chat Widget Container -->
+    <div id="chat-widget-container">
+        <div id="chat-iframe-container">
+            <div class="chat-header">
+                <span>FreshMart Assistant</span>
+                <span class="chat-close">&times;</span>
+            </div>
+            <div class="chat-loading" id="chat-loading">
+                <div class="chat-loading-spinner"></div>
+            </div>
+            <iframe 
+                id="chat-iframe" 
+                src="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json"
+                frameborder="0"
+                allow="microphone; camera"
+                width="100%"
+                height="calc(100% - 40px)"
+                allowfullscreen
+                onload="document.getElementById('chat-loading').style.display='none';">
+            </iframe>
+        </div>
+        <button id="chat-button">
+            <i class="fas fa-comment-dots"></i>
+        </button>
+    </div>
+    
+    <!-- Fallback chat link -->
+    <div style="position: fixed; bottom: 10px; left: 10px; z-index: 999;">
+        <a href="https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json" 
+           target="_blank" 
+           class="btn btn-sm btn-outline-primary">
+            <i class="fas fa-external-link-alt"></i> Open Chat in New Tab
+        </a>
+    </div>
+    
+    <!-- Chat Widget CSS -->
+    <style>
+        /* Chat widget styling */
+        #chat-widget-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+        
+        #chat-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background-color: #007bff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+        
+        #chat-button:hover {
+            transform: scale(1.1);
+            background-color: #0069d9;
+        }
+        
+        #chat-button i {
+            color: white;
+            font-size: 24px;
+        }
+        
+        #chat-iframe-container {
+            display: none;
+            width: 400px;
+            height: 600px;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 40px rgba(0,0,0,0.16);
+            background: white;
+            position: relative;
+        }
+        
+        #chat-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        .chat-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+        
+        .chat-loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #007bff;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .chat-header {
+            background: #007bff;
+            color: white;
+            padding: 10px 15px;
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .chat-close {
+            cursor: pointer;
+            font-size: 20px;
+        }
+    </style>
+    
+    <!-- Chat functionality script -->
+    <script>
+        // Simple toggle for chat widget visibility
+        document.getElementById('chat-button').addEventListener('click', function() {
+            const iframeContainer = document.getElementById('chat-iframe-container');
+            if (iframeContainer.style.display === 'block') {
+                iframeContainer.style.display = 'none';
+            } else {
+                // Show loading indicator
+                document.getElementById('chat-loading').style.display = 'flex';
+                iframeContainer.style.display = 'block';
+                
+                // Clear existing iframe content and reload with new URL
+                const iframe = document.getElementById('chat-iframe');
+                iframe.src = "about:blank";
+                setTimeout(function() {
+                    iframe.src = "https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json";
+                }, 100);
+            }
+        });
+        
+        // Also connect the header button
+        document.getElementById('open-chat-btn').addEventListener('click', function() {
+            const iframeContainer = document.getElementById('chat-iframe-container');
+            // Show loading indicator
+            document.getElementById('chat-loading').style.display = 'flex';
+            iframeContainer.style.display = 'block';
+            
+            // Force reload the iframe to ensure fresh connection
+            const iframe = document.getElementById('chat-iframe');
+            iframe.src = "about:blank";
+            setTimeout(function() {
+                iframe.src = "https://cdn.botpress.cloud/webchat/v2.3/shareable.html?configUrl=https://files.bpcontent.cloud/2025/04/17/06/20250417062748-SD60V8G5.json";
+            }, 100);
+        });
+        
+        // Close button functionality
+        document.querySelector('.chat-close').addEventListener('click', function() {
+            document.getElementById('chat-iframe-container').style.display = 'none';
+        });
+        
+        // Close chat when clicking outside
+        document.addEventListener('click', function(event) {
+            const iframeContainer = document.getElementById('chat-iframe-container');
+            const chatButton = document.getElementById('chat-button');
+            const headerButton = document.getElementById('open-chat-btn');
+            const closeButton = document.querySelector('.chat-close');
+            
+            if (iframeContainer.style.display === 'block' && 
+                !iframeContainer.contains(event.target) && 
+                event.target !== chatButton &&
+                event.target !== headerButton &&
+                event.target !== closeButton &&
+                !chatButton.contains(event.target) &&
+                !headerButton.contains(event.target) &&
+                !closeButton.contains(event.target)) {
+                iframeContainer.style.display = 'none';
+            }
+        });
+        
+        // Handle iframe load event
+        document.getElementById('chat-iframe').addEventListener('load', function() {
+            // Only hide loading when the iframe has actually loaded a URL (not about:blank)
+            if (this.src !== 'about:blank') {
+                // Give the botpress chat a moment to initialize
+                setTimeout(function() {
+                    document.getElementById('chat-loading').style.display = 'none';
+                }, 1500);
+            }
+        });
+        
+        // If iframe fails to load, show an error message
+        document.getElementById('chat-iframe').addEventListener('error', function() {
+            const loadingElement = document.getElementById('chat-loading');
+            loadingElement.innerHTML = '<div style="text-align: center; padding: 20px;"><p>Unable to load chat assistant.</p><p>Please try again or use the Support Assistant link in the sidebar.</p></div>';
+            loadingElement.style.display = 'flex';
+        });
+    </script>
+</body>
+</html> 

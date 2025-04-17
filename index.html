@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FreshMart - Fresh Groceries Online</title>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Clerk styles -->
+    <link rel="stylesheet" href="/css/auth.css">
+    <style>
+        /* Additional styles for product display */
+        .product-stock {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .low-stock {
+            color: #e67e22;
+        }
+        
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #fff;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            border-radius: 5px;
+            padding: 0;
+            z-index: 1000;
+            transform: translateY(-20px);
+            opacity: 0;
+            transition: transform 0.3s ease, opacity 0.3s ease;
+            max-width: 300px;
+        }
+        
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .notification-content {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .notification-content i {
+            color: #2ecc71;
+            font-size: 1.2rem;
+            margin-right: 10px;
+        }
+        
+        .cart-icon {
+            position: relative;
+        }
+        
+        .cart-item-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: #e74c3c;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+        
+        .loading-spinner {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 30px;
+            font-size: 1.1rem;
+            color: #666;
+        }
+        
+        .loading-spinner i {
+            margin-right: 10px;
+            color: #3498db;
+        }
+        
+        .error-message {
+            text-align: center;
+            padding: 30px;
+            color: #e74c3c;
+        }
+        
+        .no-products {
+            text-align: center;
+            padding: 30px;
+            color: #7f8c8d;
+        }
+        
+        /* Category styles */
+        .category-item {
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        
+        .category-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .category-item.active {
+            border: 3px solid #27ae60;
+            box-shadow: 0 5px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .category-item.active h3 {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        /* Product grid and card styles */
+        .products {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            padding: 20px 0;
+        }
+        
+        .product-card {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .product-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        }
+        
+        .product-category-tag {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #27ae60;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            z-index: 1;
+        }
+        
+        .notification.success .notification-content {
+            border-left: 5px solid #2ecc71;
+        }
+        
+        .notification.success i:first-child {
+            color: #2ecc71;
+        }
+        
+        .notification.warning .notification-content {
+            border-left: 5px solid #f39c12;
+        }
+        
+        .notification.warning i:first-child {
+            color: #f39c12;
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <header>
+            <div class="container">
+                <div class="logo">
+                    <a href="/index.html">
+                        <img src="/images/logo.png" alt="FreshMart Logo">
+                    </a>
+                </div>
+                <div class="search-bar">
+                    <input type="text" placeholder="Search...">
+                    <button type="submit"><i class="fas fa-search"></i></button>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="/about.html">About</a></li>
+                        <li><a href="/contact.html">Contact</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <a href="/cart.html" class="cart-icon"><i class="fas fa-shopping-cart"></i><span class="cart-item-count" id="cart-count">0</span></a>
+                    <div id="auth-buttons">
+                        <a href="/login.html" class="login-btn">Log In</a>
+                        <a href="/signup.html" class="register-btn">Register</a>
+                    </div>
+                    <!-- User profile will be shown here when logged in -->
+                    <div class="user-profile" id="user-profile" style="display: none;">
+                        <div class="profile-dropdown">
+                            <button class="profile-btn"><i class="fas fa-user-circle"></i> <span id="user-name">My Account</span></button>
+                            <div class="dropdown-content">
+                                <a href="/profile.html">My Profile</a>
+                                <a href="/orders.html">My Orders</a>
+                                <a href="#" id="logout-btn">Logout</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero-banner">
+                <div id="myCarousel" class="carousel slide" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="0" class="active" aria-label="Slide 1" aria-current="true"></button>
+                      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="1" aria-label="Slide 2" class=""></button>
+                      <button type="button" data-bs-target="#myCarousel" data-bs-slide-to="2" aria-label="Slide 3" class=""></button>
+                    </div>
+                    <div class="carousel-inner">
+                      <div class="carousel-item active">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                          <div class="carousel-caption text-start">
+                            <h1>Fresh Groceries Delivered to Your Door</h1>
+                            <p class="opacity-75">Shop our wide selection of fresh, high-quality groceries online.</p>
+                            <p><a class="btn btn-lg btn-primary" href="#categories">Shop Now</a></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                          <div class="carousel-caption">
+                            <h1>Farm Fresh Produce</h1>
+                            <p>All our produce is sourced directly from local farms for the freshest quality.</p>
+                            <p><a class="btn btn-lg btn-primary" href="#products">See Products</a></p>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="carousel-item">
+                        <svg class="bd-placeholder-img" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" preserveAspectRatio="xMidYMid slice" focusable="false"><rect width="100%" height="100%" fill="var(--bs-secondary-color)"></rect></svg>
+                        <div class="container">
+                          <div class="carousel-caption text-end">
+                            <h1>Free Delivery on First Order</h1>
+                            <p>Sign up today and get free delivery on your first order!</p>
+                            <p><a class="btn btn-lg btn-primary" href="/signup.html">Sign Up Today</a></p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#myCarousel" data-bs-slide="prev">
+                      <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Previous</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#myCarousel" data-bs-slide="next">
+                      <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                      <span class="visually-hidden">Next</span>
+                    </button>
+                  </div>
+            </section>
+
+            <section class="category-section" id="categories">
+                <div class="container">
+                    <h2>Shop by category</h2>
+                    <div class="categories">
+                        <div class="category-item" data-category-id="1">
+                            <img src="images/vegetable.jpeg" alt="Vegetables">
+                            <h3>Vegetables</h3>
+                        </div>
+                        <div class="category-item" data-category-id="2">
+                            <img src="images/fruits.jpeg" alt="Fruits">
+                            <h3>Fruits</h3>
+                        </div>
+                        <div class="category-item" data-category-id="3">
+                            <img src="images/dairy.jpeg" alt="Dairy">
+                            <h3>Dairy</h3>
+                        </div>
+                        <div class="category-item" data-category-id="4">
+                            <img src="images/bakiry.jpeg" alt="Bakery">
+                            <h3>Bakery</h3>
+                        </div>
+                        <div class="category-item" data-category-id="5">
+                            <img src="images/meat.jpeg" alt="Meat">
+                            <h3>Meat</h3>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="grocery-display" id="products">
+                <div class="container">
+                    <h2>Products</h2>
+                    <div class="products-container">
+                       
+                        
+                        <div class="products-wrapper">
+                            <div class="products" id="featured-products">
+                                <!-- Products will be loaded dynamically from the API -->
+                                <div class="loading-spinner">
+                                    <i class="fas fa-spinner fa-spin"></i> Loading products...
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="scroll-indicator">
+                        <span class="scroll-dot active" data-index="0"></span>
+                        <span class="scroll-dot" data-index="1"></span>
+                        <span class="scroll-dot" data-index="2"></span>
+                    </div>
+                    
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <div class="container">
+                <div class="footer-logo">
+                    <img src="images/logo.png" alt="FreshMart Logo">
+                    <p>FreshMart</p>
+                </div>
+                <div class="footer-links">
+                    <div class="footer-section">
+                        <h4>Categories</h4>
+                        <ul>
+                            <li><a href="#">Vegetables</a></li>
+                            <li><a href="#">Fruits</a></li>
+                            <li><a href="#">Dairy</a></li>
+                            <li><a href="#">Bakery</a></li>
+                            <li><a href="#">Meat</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>Customer Service</h4>
+                        <ul>
+                            <li><a href="#">Contact Us</a></li>
+                            <li><a href="#">FAQs</a></li>
+                            <li><a href="#">Shipping & Returns</a></li>
+                            <li><a href="#">Terms & Conditions</a></li>
+                            <li><a href="#">Privacy Policy</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h4>My Account</h4>
+                        <ul>
+                            <li><a href="#">Sign In</a></li>
+                            <li><a href="#">View Cart</a></li>
+                            <li><a href="#">My Wishlist</a></li>
+                            <li><a href="#">Track My Order</a></li>
+                            <li><a href="#">Help</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-newsletter">
+                    <h4>Subscribe to our Newsletter</h4>
+                    <p>Be the first to know about our fresh deals and new arrivals.</p>
+                    <form>
+                        <input type="email" placeholder="Enter your email">
+                        <button type="submit">Subscribe</button>
+                    </form>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-pinterest-p"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <div class="container">
+                    <p>&copy; 2023 FreshMart. All rights reserved.</p>
+                    <div class="payment-methods">
+                        <i class="fab fa-cc-visa"></i>
+                        <i class="fab fa-cc-mastercard"></i>
+                        <i class="fab fa-cc-amex"></i>
+                        <i class="fab fa-cc-paypal"></i>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification">
+        <div class="notification-content">
+            <i class="fas fa-check-circle"></i>
+            <span id="notification-message"></span>
+            <button id="notification-close"><i class="fas fa-times"></i></button>
+        </div>
+    </div>
+    
+    <!-- Bootstrap Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main Script -->
+    <script src="/js/script.js"></script>
+    <!-- Products Script -->
+    <script src="/js/products.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if user is logged in
+            checkLoginStatus();
+            
+            // Add event listener for logout button
+            document.getElementById('logout-btn').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to logout?')) {
+                    window.location.href = '/logout';
+                }
+            });
+            
+            // Function to check login status
+            function checkLoginStatus() {
+                fetch('/api/check-auth', {
+                    method: 'GET',
+                    credentials: 'include'
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.isAuthenticated) {
+                        // User is logged in, show profile and hide login/register buttons
+                        document.getElementById('auth-buttons').style.display = 'none';
+                        document.getElementById('user-profile').style.display = 'block';
+                        
+                        // Set user name if available
+                        if (data.user && data.user.first_name) {
+                            document.getElementById('user-name').textContent = data.user.first_name;
+                        }
+                    } else {
+                        // User is not logged in, show login/register buttons
+                        document.getElementById('auth-buttons').style.display = 'block';
+                        document.getElementById('user-profile').style.display = 'none';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking authentication status:', error);
+                });
+            }
+            
+            // Update cart count
+            function updateCartCount() {
+                const cart = JSON.parse(localStorage.getItem('cart')) || [];
+                const count = cart.reduce((total, item) => total + item.quantity, 0);
+                document.getElementById('cart-count').textContent = count;
+            }
+            
+            // Initialize cart count
+            updateCartCount();
+            
+            // Listen for cart updates
+            window.addEventListener('storage', function(e) {
+                if (e.key === 'cart') {
+                    updateCartCount();
+                }
+            });
+        });
+    </script>
+</body>
+</html> 
